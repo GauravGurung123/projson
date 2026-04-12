@@ -6,6 +6,7 @@ import projson.plugin.JsonPlugin
 import projson.plugin.PluginManager
 import projson.reference.ReferenceManager
 import projson.serializer.CollectionSerializer
+import projson.serializer.MapSerializer
 import projson.serializer.ObjectSerializer
 import projson.serializer.PrimitiveSerializer
 
@@ -15,6 +16,7 @@ class ProJson {
         serializers = listOf(
             PrimitiveSerializer(),
             CollectionSerializer(),
+            MapSerializer(),
             ObjectSerializer()
         ),
         referenceManager = ReferenceManager(),
