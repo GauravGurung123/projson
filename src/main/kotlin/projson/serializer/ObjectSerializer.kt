@@ -83,7 +83,7 @@ class ObjectSerializer : JsonSerializer {
                     }
 
                 } else {
-                    json.setProperty(name, value)
+                    json.setProperty(name, context.serialize(value))
                 }
             }
 

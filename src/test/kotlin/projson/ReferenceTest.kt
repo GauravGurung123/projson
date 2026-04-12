@@ -1,13 +1,16 @@
 package projson
 
+import projson.annotations.Reference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
 class ReferenceTest {
-
-    data class Node(val name: String, val next: Node?)
+    data class Node(
+        val name: String,
+        @Reference val next: Node?
+    )
 
     @Test
     fun testCircularReference() {

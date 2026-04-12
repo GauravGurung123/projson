@@ -9,7 +9,11 @@ class JsonObject(
     private val properties = mutableMapOf<String, JsonElement>()
 
     fun setProperty(key: String, value: Any?) {
-        properties[key] = context.serialize(value)
+        properties[key] = if (value is JsonElement) {
+            value
+        } else {
+            context.serialize(value)
+        }
     }
 
     fun getProperty(key: String): JsonElement? = properties[key]
