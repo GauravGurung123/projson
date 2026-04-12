@@ -52,8 +52,18 @@ class ObjectSerializer : JsonSerializer {
                 val value = prop.get(nonNullObj)
 
                 // ✅ Reference annotation handling
-                if (prop.annotations.any { it is Reference }) {
+                val isAnnotatedRef = prop.annotations.any { it is Reference }
 
+                val isCircularRef = value != null &&
+                        refManager.isSerialized(value) &&
+                        value !is String &&
+                        value !is Number &&
+                        value !is Boolean
+
+                val shouldUseRef = isAnnotatedRef || isCircularRef
+
+//                if (prop.annotations.any { it is Reference }) {
+                if (shouldUseRef) {
                     when (value) {
                         null -> json.setProperty(name, null)
 

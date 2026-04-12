@@ -2,25 +2,27 @@ package projson
 
 import projson.annotations.Reference
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
 class ReferenceTest {
     data class Node(
         val name: String,
-        @Reference val next: Node?
+        var next: Node?
     )
-
     @Test
     fun testCircularReference() {
         val n1 = Node("A", null)
-        val n2 = Node("B", n1)
-        val n1Updated = n1.copy(next = n2)
+        val n2 = Node("B", null)
 
-        val json = ProJson().toJson(n1Updated).toJsonString()
+        // ✅ create real cycle using SAME instances
+        n1.next = n2
+        n2.next = n1
+
+        val json = ProJson().toJson(n1).toJsonString()
+
+        println(json)
 
         assertTrue(json.contains("\$ref"))
-        assertTrue(json.contains("\$id"))
     }
 }

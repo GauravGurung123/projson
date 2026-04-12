@@ -1,12 +1,16 @@
 package projson.reference
 
+import java.util.Collections
+import java.util.IdentityHashMap
 import java.util.UUID
 
 class ReferenceManager {
+    // ✅ Identity-based (no hashCode recursion)
+    private val objectToId = IdentityHashMap<Any, String>()
 
-    private val objectToId = mutableMapOf<Any, String>()
-    private val serializedObjects = mutableSetOf<Any>()
-
+    private val serializedObjects = Collections.newSetFromMap(
+        IdentityHashMap<Any, Boolean>()
+    )
     fun getOrCreateId(obj: Any): String {
         return objectToId.getOrPut(obj) {
             UUID.randomUUID().toString()
