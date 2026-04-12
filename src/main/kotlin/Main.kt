@@ -1,5 +1,18 @@
 package org.gojson
 import projson.ProJson
+import projson.core.JsonObject
+
+class Task(
+    val description: String,
+    val deadline: Date?,
+    val dependencies: List<Task>
+)
+
+data class Date(
+    val day: Int,
+    val month: Int,
+    val year: Int
+)
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
@@ -21,4 +34,22 @@ fun main() {
     val json1 = ProJson().toJson(t1)
 
     println(json1.toJsonString())
+
+    val t2 = Task(
+        description = "T1",
+        deadline = Date(30, 2, 2026),
+        dependencies = emptyList()
+    )
+
+        val json2 = ProJson().toJson(t2)
+
+        println(json2.toJsonString())
+
+    val d = Date(31, 4, 2026)
+    val json3 = ProJson().toJson(d) as JsonObject
+    json3.setProperty("year", 2027)
+
+    println(json3.toJsonString())
+
+
 }
