@@ -7,7 +7,8 @@ import projson.context.SerializationContext
 import projson.core.JsonElement
 import projson.core.JsonObject
 import kotlin.reflect.KProperty1
-
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 class ObjectSerializer : JsonSerializer {
 
     override fun canHandle(obj: Any?) = obj != null
@@ -35,9 +36,10 @@ class ObjectSerializer : JsonSerializer {
         json.setProperty("\$id", id)
         json.setProperty("\$type", clazz.simpleName!!)
 
-        clazz.members
+        clazz.memberProperties
             .filterIsInstance<KProperty1<Any, *>>()
             .forEach { prop ->
+                prop.isAccessible = true
 
                 // ❌ Ignore field
                 if (prop.annotations.any { it is JsonIgnore }) return@forEach
@@ -81,7 +83,7 @@ class ObjectSerializer : JsonSerializer {
                     }
 
                 } else {
-                    json.setProperty(name, context.serialize(value))
+                    json.setProperty(name, value)
                 }
             }
 
