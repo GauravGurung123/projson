@@ -24,7 +24,7 @@ class PluginTest {
         proJson.registerPlugin(DatePlugin())
 
         val json = proJson.toJson(Date(1,1,2026)).toJsonString()
-
+        println(json)
         assertEquals("\"1/1/2026\"", json)
     }
 }
