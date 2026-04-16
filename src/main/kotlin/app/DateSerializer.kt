@@ -1,6 +1,6 @@
 package org.gojson.app
 
-import org.gojson.projson.serializer.StringSerializer
+import projson.serializer.StringSerializer
 
 class DateSerializer : StringSerializer {
     override fun serialize(obj: Any): String {

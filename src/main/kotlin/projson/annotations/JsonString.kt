@@ -1,6 +1,6 @@
 package projson.annotations
 
-import org.gojson.projson.serializer.StringSerializer
+import projson.serializer.StringSerializer
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS)
