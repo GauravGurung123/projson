@@ -13,12 +13,14 @@ class SerializationContext(
 ) {
     fun serialize(obj: Any?): JsonElement {
 
-        // Plugin first (Open/Closed)
-        if (obj != null) {
-            val plugin = pluginManager.findPlugin(obj)
-            if (plugin != null) {
-                return JsonPrimitive(plugin.serialize(obj))
-            }
+        if (obj == null) return JsonPrimitive(null)
+
+        // ✅ CRITICAL FIX
+        if (obj is JsonElement) return obj
+
+        // ✅ Plugin FIRST (single place only)
+        pluginManager.findPlugin(obj)?.let {
+            return JsonPrimitive(it.serialize(obj))
         }
 
         val serializer = serializers.first { it.canHandle(obj) }

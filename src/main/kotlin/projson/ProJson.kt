@@ -17,7 +17,7 @@ class ProJson {
             PrimitiveSerializer(),
             CollectionSerializer(),
             MapSerializer(),
-            ObjectSerializer()
+            ObjectSerializer(),
         ),
         referenceManager = ReferenceManager(),
         pluginManager = PluginManager()
