@@ -1,12 +1,12 @@
-# 🚀 ProJson - Lightweight JSON Library
+# ProJson - Lightweight JSON Library
 
-## 📌 Overview
+## Overview
 
 ProJson is a lightweight and extensible JSON serialization library written in Kotlin. It converts Kotlin/Java objects into JSON using reflection, annotations, and design patterns like Strategy, Command, and Façade.
 
 ---
 
-## ✨ Features
+## Features
 
 * Object → JSON serialization
 * Reflection-based field extraction
@@ -19,7 +19,7 @@ ProJson is a lightweight and extensible JSON serialization library written in Ko
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Option 1: Local JAR
 
@@ -89,7 +89,7 @@ val dependencies: List<Task>
 
 ---
 
-## 🔁 Circular References
+## Circular References
 
 ```json
 {
@@ -100,11 +100,5 @@ val dependencies: List<Task>
   }
 }
 ```
-
----
-
-## 👨‍💻 Author
-
-Gaurav Gurung
 
 ---
