@@ -1,5 +1,5 @@
 package org.gojson
-import org.gojson.app.Date
+import app.Date
 import app.DateAsText
 import projson.ProJson
 import projson.core.JsonArray

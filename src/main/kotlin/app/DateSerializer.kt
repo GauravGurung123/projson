@@ -1,6 +1,5 @@
 package app
 
-import org.gojson.app.Date
 import projson.serializer.StringSerializer
 
 class DateSerializer : StringSerializer {

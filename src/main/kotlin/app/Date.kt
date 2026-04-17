@@ -1,6 +1,5 @@
-package org.gojson.app
+package app
 
-import app.DateSerializer
 import projson.annotations.JsonString
 
 @JsonString(DateSerializer::class)
