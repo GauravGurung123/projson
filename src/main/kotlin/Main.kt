@@ -1,9 +1,8 @@
 package org.gojson
 import org.gojson.app.Date
-import org.gojson.app.DateAsText
+import app.DateAsText
 import projson.ProJson
 import projson.core.JsonArray
-import projson.core.JsonObject
 
 class Task(
     val description: String,

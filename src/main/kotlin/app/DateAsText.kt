@@ -1,5 +1,6 @@
-package org.gojson.app
+package app
 
+import org.gojson.app.Date
 import projson.plugin.JsonPlugin
 
 class DateAsText : JsonPlugin {
