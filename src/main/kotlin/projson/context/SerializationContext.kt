@@ -4,10 +4,10 @@ import projson.core.JsonElement
 import projson.core.JsonPrimitive
 import projson.plugin.PluginManager
 import projson.reference.ReferenceManager
-import projson.serializer.JsonSerializer
+import projson.mapper.JsonMapper
 
 class SerializationContext(
-    val serializers: List<JsonSerializer>,
+    val serializers: List<JsonMapper>,
     val referenceManager: ReferenceManager,
     val pluginManager: PluginManager
 ) {

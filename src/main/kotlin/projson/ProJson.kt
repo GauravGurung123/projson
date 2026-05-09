@@ -5,19 +5,19 @@ import projson.core.JsonElement
 import projson.plugin.JsonPlugin
 import projson.plugin.PluginManager
 import projson.reference.ReferenceManager
-import projson.serializer.CollectionSerializer
-import projson.serializer.MapSerializer
-import projson.serializer.ObjectSerializer
-import projson.serializer.PrimitiveSerializer
+import projson.mapper.CollectionMapper
+import projson.mapper.MapMapper
+import projson.mapper.ObjectMapper
+import projson.mapper.PrimitiveMapper
 
 class ProJson {
 
     private val context = SerializationContext(
         serializers = listOf(
-            PrimitiveSerializer(),
-            CollectionSerializer(),
-            MapSerializer(),
-            ObjectSerializer(),
+            PrimitiveMapper(),
+            CollectionMapper(),
+            MapMapper(),
+            ObjectMapper(),
         ),
         referenceManager = ReferenceManager(),
         pluginManager = PluginManager()

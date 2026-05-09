@@ -1,8 +1,8 @@
 package app
 
-import projson.serializer.StringSerializer
+import projson.mapper.TextStringMapper
 
-class DateSerializer : StringSerializer {
+class DateMapperText : TextStringMapper {
     override fun serialize(obj: Any): String {
         val d = obj as Date
         return "${d.day}/${d.month}/${d.year}"

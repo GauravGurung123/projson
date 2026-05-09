@@ -1,10 +1,10 @@
-package projson.serializer
+package projson.mapper
 
 import projson.context.SerializationContext
 import projson.core.JsonArray
 import projson.core.JsonElement
 
-class CollectionSerializer : JsonSerializer {
+class CollectionMapper : JsonMapper {
     override fun canHandle(obj: Any?) = obj is Collection<*>
 
     override fun serialize(obj: Any?, context: SerializationContext): JsonElement {

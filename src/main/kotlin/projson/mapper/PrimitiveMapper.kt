@@ -1,9 +1,9 @@
-package projson.serializer
+package projson.mapper
 
 import projson.context.SerializationContext
 import projson.core.JsonPrimitive
 
-class PrimitiveSerializer : JsonSerializer {
+class PrimitiveMapper : JsonMapper {
     override fun canHandle(obj: Any?) =
         obj == null || obj is String || obj is Number || obj is Boolean
 

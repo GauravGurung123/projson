@@ -1,10 +1,10 @@
-package projson.serializer
+package projson.mapper
 
 import projson.context.SerializationContext
 import projson.core.JsonElement
 import projson.core.JsonObject
 
-class MapSerializer : JsonSerializer {
+class MapMapper : JsonMapper {
 
     override fun canHandle(obj: Any?) = obj is Map<*, *>
 

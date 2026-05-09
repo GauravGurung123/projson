@@ -112,7 +112,7 @@ val propertyName
 const val MAX_DEPTH = 100
 
 // Package names use lowercase
-package projson.serializer
+package projson.mapper
 ```
 
 #### File Organization

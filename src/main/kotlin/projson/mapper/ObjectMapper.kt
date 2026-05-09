@@ -1,4 +1,4 @@
-package projson.serializer
+package projson.mapper
 
 import projson.annotations.JsonIgnore
 import projson.annotations.JsonProperty
@@ -12,7 +12,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
-class ObjectSerializer : JsonSerializer {
+class ObjectMapper : JsonMapper {
 
     // IMPORTANT: avoid re-serializing JsonElement
     override fun canHandle(obj: Any?) =

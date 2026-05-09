@@ -2,7 +2,7 @@ package app
 
 import projson.annotations.JsonString
 
-@JsonString(DateSerializer::class)
+@JsonString(DateMapperText::class)
 data class Date(
     val day: Int,
     val month: Int,
