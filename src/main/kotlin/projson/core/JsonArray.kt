@@ -1,15 +1,15 @@
 package projson.core
 
-import projson.context.SerializationContext
+import projson.context.MappingContext
 
 data class JsonArray(
-    private val context: SerializationContext
+    private val context: MappingContext
 ) : JsonElement() {
 
     private val items = mutableListOf<JsonElement>()
 
     fun add(value: Any?) {
-        items.add(context.serialize(value))
+        items.add(context.convert(value))
     }
 
     override fun toJsonString(indent: String): String {

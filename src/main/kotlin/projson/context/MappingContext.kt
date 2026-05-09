@@ -6,12 +6,12 @@ import projson.plugin.PluginManager
 import projson.reference.ReferenceManager
 import projson.mapper.JsonMapper
 
-class SerializationContext(
-    val serializers: List<JsonMapper>,
+class MappingContext(
+    val mappers: List<JsonMapper>,
     val referenceManager: ReferenceManager,
     val pluginManager: PluginManager
 ) {
-    fun serialize(obj: Any?): JsonElement {
+    fun convert(obj: Any?): JsonElement {
 
         if (obj == null) return JsonPrimitive(null)
 
@@ -20,10 +20,10 @@ class SerializationContext(
 
         // ✅ Plugin FIRST (single place only)
         pluginManager.findPlugin(obj)?.let {
-            return JsonPrimitive(it.serialize(obj))
+            return JsonPrimitive(it.transform(obj))
         }
 
-        val serializer = serializers.first { it.canHandle(obj) }
-        return serializer.serialize(obj, this)
+        val mapper = mappers.first { it.canHandle(obj) }
+        return mapper.map(obj, this)
     }
 }

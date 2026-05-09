@@ -1,6 +1,6 @@
 package projson
 
-import projson.context.SerializationContext
+import projson.context.MappingContext
 import projson.core.JsonElement
 import projson.plugin.JsonPlugin
 import projson.plugin.PluginManager
@@ -12,8 +12,8 @@ import projson.mapper.PrimitiveMapper
 
 class ProJson {
 
-    private val context = SerializationContext(
-        serializers = listOf(
+    private val context = MappingContext(
+        mappers = listOf(
             PrimitiveMapper(),
             CollectionMapper(),
             MapMapper(),
@@ -28,6 +28,6 @@ class ProJson {
     }
 
     fun toJson(obj: Any?): JsonElement {
-        return context.serialize(obj)
+        return context.convert(obj)
     }
 }

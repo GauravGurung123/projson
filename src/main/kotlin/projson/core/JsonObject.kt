@@ -1,9 +1,9 @@
 package projson.core
 
-import projson.context.SerializationContext
+import projson.context.MappingContext
 
 data class JsonObject(
-    private val context: SerializationContext
+    private val context: MappingContext
 ) : JsonElement() {
 
     private val properties = mutableMapOf<String, JsonElement>()
@@ -12,7 +12,7 @@ data class JsonObject(
         val element = when (value) {
             null -> JsonNull
             is JsonElement -> value
-            else -> context.serialize(value)
+            else -> context.convert(value)
         }
 
         properties[key] = element

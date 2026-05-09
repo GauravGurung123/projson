@@ -4,7 +4,7 @@ import projson.annotations.JsonIgnore
 import projson.annotations.JsonProperty
 import projson.annotations.Reference
 import projson.annotations.JsonString
-import projson.context.SerializationContext
+import projson.context.MappingContext
 import projson.core.JsonElement
 import projson.core.JsonObject
 import projson.core.JsonPrimitive
@@ -18,7 +18,7 @@ class ObjectMapper : JsonMapper {
     override fun canHandle(obj: Any?) =
         obj != null && obj !is JsonElement
 
-    override fun serialize(obj: Any?, context: SerializationContext): JsonElement {
+    override fun map(obj: Any?, context: MappingContext): JsonElement {
 
         val nonNullObj = obj!!
         val clazz = nonNullObj::class
@@ -33,7 +33,7 @@ class ObjectMapper : JsonMapper {
             val serializerClass = jsonStringAnnotation.serializer
             val serializer = serializerClass.constructors.first().call()
 
-            val result = serializer.serialize(nonNullObj)
+            val result = serializer.map(nonNullObj)
 
             // 🚫 DO NOT register references for primitive conversion
             return JsonPrimitive(result)
@@ -118,7 +118,7 @@ class ObjectMapper : JsonMapper {
 
                 } else {
                     // Delegate safely
-                    json.setProperty(name, context.serialize(value))
+                    json.setProperty(name, context.convert(value))
                 }
             }
 

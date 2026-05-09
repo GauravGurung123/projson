@@ -2,13 +2,11 @@ package projson
 
 import projson.annotations.JsonIgnore
 import projson.annotations.JsonProperty
-import projson.context.SerializationContext
+import projson.context.MappingContext
 import projson.core.JsonObject
 import projson.core.JsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class AnnotationTest {
 
@@ -21,7 +19,7 @@ class AnnotationTest {
     fun testAnnotations() {
         val task = Task("Test", "hidden")
 
-        val context = SerializationContext()
+        val context = MappingContext()
 
 //        val json = ProJson().toJson(task).toJsonString()
         val json = JsonObject(context)
