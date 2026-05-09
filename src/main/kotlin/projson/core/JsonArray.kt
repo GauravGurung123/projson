@@ -2,7 +2,7 @@ package projson.core
 
 import projson.context.SerializationContext
 
-class JsonArray(
+data class JsonArray(
     private val context: SerializationContext
 ) : JsonElement() {
 

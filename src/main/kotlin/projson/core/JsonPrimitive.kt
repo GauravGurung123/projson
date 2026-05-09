@@ -1,6 +1,5 @@
 package projson.core
-
-class JsonPrimitive(private val value: Any?) : JsonElement() {
+data class JsonPrimitive(private val value: Any?) : JsonElement() {
     override fun toJsonString(indent: String): String {
         return when (value) {
             null -> "null"

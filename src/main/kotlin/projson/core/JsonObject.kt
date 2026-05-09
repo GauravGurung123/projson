@@ -2,7 +2,7 @@ package projson.core
 
 import projson.context.SerializationContext
 
-class JsonObject(
+data class JsonObject(
     private val context: SerializationContext
 ) : JsonElement() {
 
@@ -17,14 +17,6 @@ class JsonObject(
 
         properties[key] = element
     }
-
-    fun getProperty(key: String): JsonElement? = properties[key]
-
-    fun removeProperty(key: String) {
-        properties.remove(key)
-    }
-
-    fun keys(): Set<String> = properties.keys
 
     override fun toJsonString(indent: String): String {
         val inner = properties.entries.joinToString(",\n") {
