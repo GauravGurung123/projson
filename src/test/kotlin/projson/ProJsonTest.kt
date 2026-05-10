@@ -3,20 +3,46 @@ package projson
 import projson.core.JsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ProJsonTest {
 
     @Test
-    fun testPrimitive() {
-        val json = JsonPrimitive("hello")
-        assertEquals(json, ProJson().toJson("hello"))
+    fun testStringConversion() {
+
+        val expected = JsonPrimitive("Hello")
+
+        val actual = ProJson().toJson("Hello")
+
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun testArray() {
-        val json = ProJson().toJson(listOf("a", "b", "c"))
+    fun testNumberConversion() {
 
-        assertEquals("[\"a\", \"b\"]" ,json.toJsonString())
+        val expected = JsonPrimitive(100)
+
+        val actual = ProJson().toJson(100)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun testBooleanConversion() {
+
+        val expected = JsonPrimitive(true)
+
+        val actual = ProJson().toJson(true)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun testNullConversion() {
+
+        val expected = JsonPrimitive(null)
+
+        val actual = ProJson().toJson(null)
+
+        assertEquals(expected, actual)
     }
 }

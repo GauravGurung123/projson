@@ -12,7 +12,7 @@ class PluginTest {
         override fun supports(clazz: Class<*>) =
             clazz.simpleName == "Date"
 
-        override fun serialize(obj: Any): String {
+        override fun transform(obj: Any): String {
             val d = obj as Date
             return "${d.day}/${d.month}/${d.year}"
         }
