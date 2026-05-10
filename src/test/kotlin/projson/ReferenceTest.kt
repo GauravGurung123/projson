@@ -25,4 +25,28 @@ class ReferenceTest {
 
         assertTrue(json.contains("\$ref"))
     }
+
+    data class Task(
+        val name: String,
+
+        @Reference
+        val dependencies: List<Task>
+    )
+
+    @Test
+    fun testReferenceSerialization() {
+
+        val child = Task("Child", emptyList())
+
+        val parent = Task(
+            "Parent",
+            listOf(child)
+        )
+
+        val json = ProJson()
+            .toJson(parent)
+            .toJsonString()
+
+        assertTrue(json.contains("\$ref"))
+    }
 }
