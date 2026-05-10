@@ -30,11 +30,10 @@ class ObjectMapper : JsonMapper {
             .firstOrNull()
 
         if (jsonStringAnnotation != null) {
-            val serializerClass = jsonStringAnnotation.serializer
-            val serializer = serializerClass.constructors.first().call()
+            val mapperClass = jsonStringAnnotation.mapper
+            val mapper = mapperClass.constructors.first().call()
 
-            val result = serializer.map(nonNullObj)
-
+            val result = mapper.map(nonNullObj)
             // 🚫 DO NOT register references for primitive conversion
             return JsonPrimitive(result)
         }

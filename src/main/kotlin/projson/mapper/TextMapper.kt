@@ -1,5 +1,5 @@
 package projson.mapper
 
-interface TextStringMapper {
+interface TextMapper {
     fun map(obj: Any): String
 }

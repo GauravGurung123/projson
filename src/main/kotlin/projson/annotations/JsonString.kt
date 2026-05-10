@@ -1,7 +1,7 @@
 package projson.annotations
 
-import projson.mapper.TextStringMapper
+import projson.mapper.TextMapper
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS)
-annotation class JsonString(val serializer: KClass<out TextStringMapper>)
+annotation class JsonString(val mapper: KClass<out TextMapper>)
