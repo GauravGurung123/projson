@@ -2,7 +2,7 @@ package projson.core
 
 import projson.context.MappingContext
 
-data class JsonObject(
+class JsonObject(
     private val context: MappingContext
 ) : JsonElement() {
 
@@ -16,6 +16,10 @@ data class JsonObject(
         }
 
         properties[key] = element
+    }
+
+    fun getProperty(key: String): JsonElement? {
+        return properties[key]
     }
 
     override fun toJsonString(indent: String): String {
