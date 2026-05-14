@@ -7,42 +7,39 @@ import kotlin.test.assertEquals
 class ProJsonTest {
 
     @Test
-    fun testStringConversion() {
+    fun testJsonPrimitiveConversion() {
 
-        val expected = JsonPrimitive("Hello")
+//        String conversion
+        val expectedString = JsonPrimitive("Hello")
+        val actualString = ProJson().toJson("Hello")
+        assertEquals(expectedString, actualString)
 
-        val actual = ProJson().toJson("Hello")
+//        Number conversion
+        val expectedNumber = JsonPrimitive(100)
+        val actualNumber = ProJson().toJson(100)
+        assertEquals(expectedNumber, actualNumber)
 
-        assertEquals(expected, actual)
+//        Boolean conversion
+        val expectedBoolean = JsonPrimitive(true)
+        val actualBoolean = ProJson().toJson(true)
+        assertEquals(expectedBoolean, actualBoolean)
+
+//        Null conversion
+        val expectedNull = JsonPrimitive(null)
+        val actualNull = ProJson().toJson(null)
+        assertEquals(expectedNull, actualNull)
     }
 
     @Test
-    fun testNumberConversion() {
+    fun testConvertCollection() {
+        val expected = "[\"A\", \"B\"]"
+        val actual = ProJson()
+            .toJson(listOf("A", "B"))
+            .toJsonString()
 
-        val expected = JsonPrimitive(100)
-
-        val actual = ProJson().toJson(100)
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun testBooleanConversion() {
-
-        val expected = JsonPrimitive(true)
-
-        val actual = ProJson().toJson(true)
-
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun testNullConversion() {
-
-        val expected = JsonPrimitive(null)
-
-        val actual = ProJson().toJson(null)
-
-        assertEquals(expected, actual)
+        assertEquals(
+            "[\"A\", \"B\"]",
+            actual
+        )
     }
 }

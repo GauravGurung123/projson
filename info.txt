@@ -1,0 +1,23 @@
+Now the issue is exactly because JsonObject is a data class.
+Kotlin data classes compare constructor properties.
+
+Your constructor contains:
+    private val context: MappingContext
+    So equality becomes: expected.context == actual.context
+NOT the JSON properties.
+data class JsonObject is architecturally wrong for equality testing.
+Because:
+    context is runtime infrastructure
+    NOT actual JSON data
+
+ Q. Why JSON Libraries Usually Avoid Data Classes
+ Because runtime/internal fields:
+     context
+     parser state
+     references
+     caches
+ should NOT participate in equality.
+
+ Production libraries instead:
+     compare logical JSON structure
+     not runtime infrastructure
