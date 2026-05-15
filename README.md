@@ -1,7 +1,7 @@
 # ProJson - Professional JSON Serialization Library for Kotlin
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Kotlin](https://img.shields.io/badge/kotlin-2.3.10+-purple.svg)
+![Kotlin](https://img.shields.io/badge/kotlin-2.2+-purple.svg)
 ![JVM](https://img.shields.io/badge/platform-JVM-orange.svg)
 
 ## 📋 Overview
@@ -14,63 +14,8 @@
 - **Type Safety**: Full Kotlin type support with null safety
 - **Extensible Architecture**: Plugin system for custom serializers
 - **Memory Efficient**: Intelligent circular reference detection
-- **Standards Compliant**: RFC 8259 JSON specification compliant
 - **Production Ready**: Battle-tested with comprehensive test coverage
-
 ---
-
-## 🚀 Quick Start
-
-### Installation
-
-#### Gradle (Kotlin DSL)
-```kotlin
-dependencies {
-    implementation("org.gojson:gojson:1.0-SNAPSHOT")
-}
-```
-
-#### Maven
-```xml
-<dependency>
-    <groupId>org.gojson</groupId>
-    <artifactId>gojson</artifactId>
-    <version>1.0-SNAPSHOT</version>
-</dependency>
-```
-
-#### Local JAR
-```kotlin
-dependencies {
-    implementation(files("libs/gojson-1.0-SNAPSHOT.jar"))
-}
-```
-
-### Basic Usage
-
-```kotlin
-import projson.ProJson
-
-data class User(val name: String, val age: Int, val email: String?)
-
-fun main() {
-    val user = User("Alice", 30, "alice@example.com")
-    val json = ProJson().toJson(user)
-    println(json.toJsonString())
-}
-```
-
-**Output:**
-```json
-{
-  "name": "Alice",
-  "age": 30,
-  "email": "alice@example.com"
-}
-```
-
----
-
 ## 📚 Core Features
 
 ### ✨ Serialization Capabilities
@@ -84,332 +29,599 @@ fun main() {
 | **Null Safety** | Proper null handling | `null` values |
 | **Circular References** | $id/$ref system | See below |
 
-### 🏗️ Architecture
+# ProJson
 
-ProJson follows SOLID principles with a modular architecture:
+A lightweight Kotlin library for converting any object into JSON with zero configuration. Annotate your fields, register a plugin, and call `toJson()` — that's it.
 
+---
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Serializing Primitives](#serializing-primitives)
+- [Serializing Collections](#serializing-collections)
+- [Serializing Maps](#serializing-maps)
+- [Serializing Objects](#serializing-objects)
+- [Annotations](#annotations)
+    - [@JsonIgnore](#jsonignore)
+    - [@JsonProperty](#jsonproperty)
+    - [@JsonString](#jsonstring)
+    - [@Reference](#reference)
+- [Plugins](#plugins)
+- [Circular References](#circular-references)
+- [Mutating JSON After Serialization](#mutating-json-after-serialization)
+- [Full Example](#full-example)
+- [Annotation Quick Reference](#annotation-quick-reference)
+
+---
+
+## Installation
+
+Add the following to your `build.gradle.kts`:
+#### Local JAR
+```kotlin
+dependencies {
+    implementation(files("libs/gojson-1.0-SNAPSHOT.jar"))
+}
 ```
-ProJson (Façade)
-├── SerializationContext (Coordinator)
-├── Serializers (Strategy Pattern)
-│   ├── PrimitiveSerializer
-│   ├── CollectionSerializer
-│   ├── MapSerializer
-│   └── ObjectSerializer
-├── ReferenceManager (Circular Reference Handling)
-└── PluginManager (Extensibility)
+
+## Quick Start
+
+```kotlin
+import projson.ProJson
+
+data class User(val name: String, val age: Int)
+
+val json = ProJson().toJson(User("Alice", 30)).toJsonString()
+println(json)
+```
+
+Output:
+
+```json
+{
+  "$id": "a3f2...",
+  "$type": "User",
+  "name": "Alice",
+  "age": 30
+}
+```
+
+> **`$id` and `$type`** are added automatically to every serialized object.  
+> `$id` is a unique identifier for the object instance.  
+> `$type` is the class name, useful for deserialization.
+
+---
+
+## Serializing Primitives
+
+ProJson handles all Kotlin scalar types out of the box.
+
+```kotlin
+val pj = ProJson()
+
+pj.toJson("hello").toJsonString()   // "hello"
+pj.toJson(42).toJsonString()        // 42
+pj.toJson(3.14).toJsonString()      // 3.14
+pj.toJson(true).toJsonString()      // true
+pj.toJson(false).toJsonString()     // false
+pj.toJson(null).toJsonString()      // null
 ```
 
 ---
 
-## 🛠️ Advanced Usage
+## Serializing Collections
 
-### Custom Serialization with Plugins
-
-```kotlin
-import projson.plugin.JsonPlugin
-import projson.ProJson
-
-class DateSerializer : JsonPlugin {
-    override fun supports(clazz: Class<*>) = 
-        clazz.simpleName == "Date"
-    
-    override fun serialize(obj: Any): String {
-        val date = obj as Date
-        return "\"${date.format("yyyy-MM-dd")}\""
-    }
-}
-
-fun main() {
-    val proJson = ProJson()
-    proJson.registerPlugin(DateSerializer())
-    
-    val result = proJson.toJson(Date())
-    println(result.toJsonString())
-}
-```
-
-### Working with JSON Tree
+Pass any `List` or `Set` and it becomes a JSON array. Elements can be of any type — ProJson handles each one automatically.
 
 ```kotlin
-import projson.core.JsonObject
-import projson.core.JsonArray
+val pj = ProJson()
 
-// Create and modify JSON objects
-val json = ProJson().toJson(user) as JsonObject
-json.setProperty("lastUpdated", "2024-01-15")
-json.removeProperty("email")
+pj.toJson(listOf("kotlin", "java", "scala")).toJsonString()
+// ["kotlin", "java", "scala"]
 
-// Work with arrays
-val array = ProJson().toJson(listOf(1, 2, 3)) as JsonArray
-array.addElement(4)
-array.removeElement(0)
+pj.toJson(listOf(1, 2, 3)).toJsonString()
+// [1, 2, 3]
+
+pj.toJson(listOf("text", 42, true, null)).toJsonString()
+// ["text", 42, true, null]
+
+pj.toJson(emptyList<Any>()).toJsonString()
+// []
 ```
 
-### Circular Reference Handling
+Nested collections work too:
 
 ```kotlin
-data class Node(val name: String, var next: Node? = null)
-
-fun main() {
-    val node1 = Node("A")
-    val node2 = Node("B")
-    node1.next = node2
-    node2.next = node1  // Circular reference
-    
-    val json = ProJson().toJson(node1)
-    println(json.toJsonString())
-}
+pj.toJson(listOf(listOf(1, 2), listOf(3, 4))).toJsonString()
+// [[1, 2], [3, 4]]
 ```
 
-**Output:**
+---
+
+## Serializing Maps
+
+A `Map<*, *>` becomes a JSON object. All keys are converted to strings automatically.
+
+```kotlin
+val pj = ProJson()
+
+pj.toJson(mapOf("name" to "Alice", "age" to 30)).toJsonString()
+// {
+//   "name": "Alice",
+//   "age": 30
+// }
+```
+
+Map values can be any type — objects, collections, other maps:
+
+```kotlin
+pj.toJson(mapOf(
+    "user"  to mapOf("name" to "Bob"),
+    "tags"  to listOf("admin", "user"),
+    "score" to 99
+)).toJsonString()
+```
+
+---
+
+## Serializing Objects
+
+Any Kotlin class is serialized automatically — no setup required.
+
+```kotlin
+data class Address(val street: String, val city: String)
+data class User(val name: String, val age: Int, val address: Address)
+
+val user = User(
+    name    = "Alice",
+    age     = 30,
+    address = Address("Baker Street", "London")
+)
+
+ProJson().toJson(user).toJsonString()
+```
+
+Output:
+
 ```json
 {
-  "$id": "1",
-  "name": "A",
-  "next": {
-    "$id": "2",
-    "name": "B",
-    "next": {
-      "$ref": "1"
-    }
+  "$id": "...",
+  "$type": "User",
+  "name": "Alice",
+  "age": 30,
+  "address": {
+    "$id": "...",
+    "$type": "Address",
+    "street": "Baker Street",
+    "city": "London"
   }
 }
 ```
 
+Nested objects are serialized recursively. Each level gets its own `$id` and `$type`.
+
 ---
 
-## 🏷️ Annotations Reference
+## Annotations
 
-### `@JsonProperty`
-Customize JSON property names and behavior.
+Annotations give you fine-grained control over how your class fields appear in JSON. Place them directly on your data class fields — no extra wiring required.
 
-```kotlin
-data class UserProfile(
-    @JsonProperty("full_name")
-    val fullName: String,
-    
-    @JsonProperty("user_age")
-    val age: Int
-)
-```
+---
 
-### `@JsonIgnore`
-Exclude properties from serialization.
+### @JsonIgnore
+
+Excludes a field from the JSON output completely. The key and the value both disappear.
 
 ```kotlin
-data class SecureUser(
+import projson.annotations.JsonIgnore
+
+data class Account(
     val username: String,
-    @JsonIgnore
-    val password: String,
-    @JsonIgnore
-    val internalId: String
-)
-```
-
-### `@Reference`
-Mark properties for circular reference tracking.
-
-```kotlin
-data class Task(
-    val id: String,
-    val name: String,
-    
-    @Reference
-    val dependencies: List<Task>
-)
-```
-
-### `@JsonString`
-Force serialization as JSON string.
-
-```kotlin
-data class Config(
-    @JsonString
-    val complexObject: ComplexType
-)
-```
-
----
-
-## 🔧 Configuration
-
-### Serialization Context
-
-```kotlin
-import projson.context.SerializationContext
-import projson.reference.ReferenceManager
-import projson.plugin.PluginManager
-
-val context = SerializationContext(
-    serializers = listOf(
-        CustomPrimitiveSerializer(),
-        CustomCollectionSerializer(),
-        // ... other serializers
-    ),
-    referenceManager = ReferenceManager(),
-    pluginManager = PluginManager()
+    @JsonIgnore val password: String,
+    val email: String
 )
 
-val proJson = ProJson(context)
+ProJson().toJson(Account("alice", "s3cr3t", "alice@example.com")).toJsonString()
 ```
 
-### Plugin Registration
+Output:
 
-```kotlin
-val proJson = ProJson()
-
-// Register multiple plugins
-proJson.registerPlugin(CustomDateSerializer())
-proJson.registerPlugin(CustomEnumSerializer())
-proJson.registerPlugin(CustomBigDecimalSerializer())
-```
-
----
-
-## 📖 API Reference
-
-### Core Classes
-
-#### `ProJson`
-Main entry point for JSON serialization.
-
-```kotlin
-class ProJson {
-    fun registerPlugin(plugin: JsonPlugin)
-    fun toJson(obj: Any?): JsonElement
+```json
+{
+  "$id": "...",
+  "$type": "Account",
+  "username": "alice",
+  "email": "alice@example.com"
 }
 ```
 
-#### `JsonElement`
-Base class for all JSON nodes.
+`password` is completely absent from the output.
+
+---
+
+### @JsonProperty
+
+Renames a field in the JSON output. The value is unchanged — only the key is different.
 
 ```kotlin
-sealed class JsonElement {
-    abstract fun toJsonString(indent: String = ""): String
+import projson.annotations.JsonProperty
+
+data class Product(
+    @JsonProperty("product_name") val name: String,
+    @JsonProperty("unit_price")   val price: Double
+)
+
+ProJson().toJson(Product("Laptop", 999.99)).toJsonString()
+```
+
+Output:
+
+```json
+{
+  "$id": "...",
+  "$type": "Product",
+  "product_name": "Laptop",
+  "unit_price": 999.99
 }
 ```
 
-#### Subclasses
-- `JsonObject` - JSON object with key-value pairs
-- `JsonArray` - JSON array with ordered elements
-- `JsonPrimitive` - Primitive values (string, number, boolean)
-- `JsonNull` - JSON null value
+Fields without `@JsonProperty` keep their original Kotlin name.
 
-### Plugin Interface
+---
+
+### @JsonString
+
+Annotates an entire **class** to be serialized as a plain JSON string instead of an object. You provide a converter that turns your object into a `String`.
+
+**Step 1 — Write a converter:**
 
 ```kotlin
-interface JsonPlugin {
-    fun supports(clazz: Class<*>): Boolean
-    fun serialize(obj: Any): String
+import projson.mapper.TextMapper
+
+class TemperatureConverter : TextMapper {
+    override fun map(obj: Any): String {
+        val t = obj as Temperature
+        return "${t.value}${t.unit}"
+    }
+}
+```
+
+**Step 2 — Annotate your class:**
+
+```kotlin
+import projson.annotations.JsonString
+
+@JsonString(TemperatureConverter::class)
+data class Temperature(val value: Double, val unit: String)
+```
+
+**Step 3 — Use it:**
+
+```kotlin
+ProJson().toJson(Temperature(36.6, "°C")).toJsonString()
+// "36.6°C"
+```
+
+When used as a field inside another object:
+
+```kotlin
+data class Patient(val name: String, val bodyTemp: Temperature)
+
+ProJson().toJson(Patient("Bob", Temperature(37.0, "°C"))).toJsonString()
+```
+
+Output:
+
+```json
+{
+  "$id": "...",
+  "$type": "Patient",
+  "name": "Bob",
+  "bodyTemp": "37.0°C"
+}
+```
+
+> **Requirement:** Your converter class must have a no-argument constructor.
+
+---
+
+### @Reference
+
+Marks a field so that its value is emitted as a `$ref` pointer rather than a fully serialized object. Use this when an object is shared and you want to reference it rather than duplicate it in the output.
+
+```kotlin
+import projson.annotations.Reference
+
+data class Category(val name: String)
+
+data class Article(
+    val title: String,
+    @Reference val category: Category
+)
+
+val cat     = Category("Technology")
+val article = Article("Getting started with Kotlin", cat)
+
+ProJson().toJson(article).toJsonString()
+```
+
+Output:
+
+```json
+{
+  "$id": "...",
+  "$type": "Article",
+  "title": "Getting started with Kotlin",
+  "category": { "$ref": "<category-uuid>" }
+}
+```
+
+`@Reference` also works on collection fields — each element in the list becomes a `$ref`:
+
+```kotlin
+data class Post(
+    val title: String,
+    @Reference val tags: List<Tag>
+)
+```
+
+Output:
+
+```json
+{
+  "title": "Hello World",
+  "tags": [
+    { "$ref": "uuid-tag-1" },
+    { "$ref": "uuid-tag-2" }
+  ]
 }
 ```
 
 ---
 
-## 🧪 Testing
+## Plugins
 
-### Running Tests
+Plugins let you control how a specific type is serialized, without modifying your data classes. This is the right approach for types you do not own — JDK types like `Date` or `UUID`, or third-party classes.
 
-```bash
-./gradlew test
+**Step 1 — Implement `JsonPlugin`:**
+
+```kotlin
+import projson.plugin.JsonPlugin
+import java.text.SimpleDateFormat
+import java.util.Date
+
+class DatePlugin : JsonPlugin {
+    private val fmt = SimpleDateFormat("yyyy-MM-dd")
+
+    override fun supports(clazz: Class<*>) = clazz == Date::class.java
+
+    override fun transform(obj: Any): String = fmt.format(obj as Date)
+}
 ```
 
-### Test Coverage
+**Step 2 — Register the plugin on your `ProJson` instance:**
 
-The library includes comprehensive tests covering:
-- Basic serialization scenarios
-- Circular reference handling
-- Plugin system functionality
-- Annotation processing
-- Edge cases and error conditions
-
----
-
-## 🔍 Performance Considerations
-
-### Memory Usage
-- Efficient circular reference detection
-- Minimal object allocation during serialization
-- Lazy evaluation where possible
-
-### Speed
-- Optimized reflection usage
-- Cached serializer lookup
-- Stream-based JSON generation
-
-### Best Practices
-- Register plugins before serialization
-- Avoid deep object graphs when possible
-- Use appropriate data types for better performance
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Development Setup
-
-```bash
-git clone https://github.com/your-org/gojson.git
-cd gojson
-./gradlew build
+```kotlin
+val pj = ProJson()
+pj.registerPlugin(DatePlugin())
 ```
 
-### Running Examples
+**Step 3 — Use it normally:**
 
-```bash
-./gradlew run
+```kotlin
+data class Event(val name: String, val date: Date)
+
+pj.toJson(Event("Conference", Date())).toJsonString()
+```
+
+Output:
+
+```json
+{
+  "$id": "...",
+  "$type": "Event",
+  "name": "Conference",
+  "date": "2025-05-14"
+}
+```
+
+**Things to know about plugins:**
+
+- A plugin takes priority over all other serialization rules for its declared type.
+- If you register multiple plugins for the same type, the first one registered wins.
+- Each `ProJson` instance has its own plugin list. Registering on one instance does not affect others.
+- Plugins apply to that type wherever it appears — as a top-level value, a field, or inside a collection.
+
+**Plugin vs. `@JsonString` — choosing the right tool:**
+
+| Situation                                       | Recommended approach          |
+|-------------------------------------------------|-------------------------------|
+| You own the class                               | `@JsonString`                 |
+| The class is from a library or the JDK          | Plugin                        |
+| You need different formats in different contexts | Plugin (one per `ProJson` instance) |
+| Simple, fixed string format                     | Either works                  |
+
+---
+
+## Circular References
+
+ProJson handles circular references automatically. When a back-reference is detected, it emits a `$ref` pointer to the original object's `$id` instead of looping indefinitely. You never get a `StackOverflowError`.
+
+```kotlin
+data class Node(val label: String, var next: Node? = null)
+
+val a = Node("A")
+val b = Node("B")
+a.next = b
+b.next = a   // circular reference
+
+ProJson().toJson(a).toJsonString()
+```
+
+Output:
+
+```json
+{
+  "$id": "uuid-a",
+  "$type": "Node",
+  "label": "A",
+  "next": {
+    "$id": "uuid-b",
+    "$type": "Node",
+    "label": "B",
+    "next": { "$ref": "uuid-a" }
+  }
+}
+```
+
+Self-references work the same way:
+
+```kotlin
+val a = Node("loop")
+a.next = a
+
+ProJson().toJson(a).toJsonString()
+// { "$id": "uuid-a", ..., "next": { "$ref": "uuid-a" } }
+```
+
+No configuration needed — circular reference safety is always on.
+
+---
+
+## Mutating JSON After Serialization
+
+Use `AddPropertyCommand` to inject fields into a serialized `JsonObject` after the fact — for example, to add audit timestamps, computed values, or server-side metadata.
+
+**Adding a single property:**
+
+```kotlin
+import projson.command.AddPropertyCommand
+import projson.core.JsonObject
+
+val pj   = ProJson()
+val json = pj.toJson(user) as JsonObject
+
+AddPropertyCommand(json, "verified", true).execute()
+
+println(json.toJsonString())
+// { ..., "name": "Alice", "verified": true }
+```
+
+**Batch — add several properties at once:**
+
+```kotlin
+val commands = listOf(
+    AddPropertyCommand(json, "role",      "admin"),
+    AddPropertyCommand(json, "lastLogin", "2025-05-14"),
+    AddPropertyCommand(json, "active",    true)
+)
+
+commands.forEach { it.execute() }
+```
+
+**Deferred — decide now, execute later:**
+
+```kotlin
+val cmd = AddPropertyCommand(json, "status", "pending")
+
+// Execute only when a condition is met
+if (isApproved) {
+    cmd.execute()
+}
 ```
 
 ---
 
-## 📄 License
+## Full Example
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+A realistic scenario combining objects, annotations, a plugin, and a collection:
+
+```kotlin
+import projson.ProJson
+import projson.annotations.JsonIgnore
+import projson.annotations.JsonProperty
+import projson.annotations.JsonString
+import projson.mapper.TextMapper
+import projson.plugin.JsonPlugin
+
+// Serialize SimpleDate as an ISO string
+class IsoDateConverter : TextMapper {
+    override fun map(obj: Any): String {
+        val d = obj as SimpleDate
+        return "%04d-%02d-%02d".format(d.year, d.month, d.day)
+    }
+}
+
+@JsonString(IsoDateConverter::class)
+data class SimpleDate(val year: Int, val month: Int, val day: Int)
+
+// Plugin for java.util.UUID
+class UuidPlugin : JsonPlugin {
+    override fun supports(clazz: Class<*>) = clazz == java.util.UUID::class.java
+    override fun transform(obj: Any) = obj.toString()
+}
+
+// Data model
+data class Product(
+    @JsonProperty("product_name") val name: String,
+    val price: Double,
+    @JsonIgnore val internalSku: String,
+    val tags: List<String>,
+    val availableFrom: SimpleDate,
+    val trackingId: java.util.UUID
+)
+
+// Serialize
+val pj = ProJson()
+pj.registerPlugin(UuidPlugin())
+
+val product = Product(
+    name          = "ProJson Library",
+    price         = 0.0,
+    internalSku   = "SKU-9999",
+    tags          = listOf("kotlin", "json", "open-source"),
+    availableFrom = SimpleDate(2025, 5, 14),
+    trackingId    = java.util.UUID.randomUUID()
+)
+
+println(pj.toJson(product).toJsonString())
+```
+
+Output:
+
+```json
+{
+  "$id": "...",
+  "$type": "Product",
+  "product_name": "ProJson Library",
+  "price": 0.0,
+  "tags": ["kotlin", "json", "open-source"],
+  "availableFrom": "2025-05-14",
+  "trackingId": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+}
+```
+
+What each annotation and plugin did:
+
+| Field          | Applied                | Effect                                     |
+|----------------|------------------------|--------------------------------------------|
+| `name`         | `@JsonProperty`        | Renamed to `product_name` in the output    |
+| `internalSku`  | `@JsonIgnore`          | Completely absent from the output          |
+| `availableFrom`| `@JsonString`          | Serialized as `"2025-05-14"` not an object |
+| `trackingId`   | Plugin (`UuidPlugin`)  | Serialized as a plain UUID string          |
 
 ---
 
-## 🆘 Support
+## Annotation Quick Reference
 
-- **Documentation**: [Full API Docs](docs/api.md)
-- **Issues**: [GitHub Issues](https://github.com/your-org/gojson/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/gojson/discussions)
-- **Email**: support@gojson.org
-
----
-
-## 🗺️ Roadmap
-
-### Version 1.1
-- [ ] JSON deserialization support
-- [ ] Streaming API for large datasets
-- [ ] Schema validation
-
-### Version 1.2
-- [ ] Kotlinx Serialization compatibility
-- [ ] Jackson migration utilities
-- [ ] Performance benchmarks
-
-### Version 2.0
-- [ ] Multiplatform support (JS, Native)
-- [ ] GraphQL integration
-- [ ] Advanced schema generation
-
----
-
-## 📊 Comparison with Other Libraries
-
-| Feature | ProJson | Gson | Jackson | Kotlinx Serialization |
-|---------|---------|------|---------|----------------------|
-| **Zero Dependencies** | ✅ | ❌ | ❌ | ❌ |
-| **Plugin System** | ✅ | ❌ | ✅ | ✅ |
-| **Circular References** | ✅ | ❌ | ✅ | ❌ |
-| **Compile-time Safe** | ❌ | ❌ | ❌ | ✅ |
-| **Memory Efficient** | ✅ | ❌ | ❌ | ✅ |
-| **Learning Curve** | Low | Low | High | Medium |
-
+| Annotation                        | Target | Effect                                                           |
+|-----------------------------------|--------|------------------------------------------------------------------|
+| `@JsonIgnore`                     | Field  | Excludes the field from JSON output entirely                     |
+| `@JsonProperty("key")`            | Field  | Uses `"key"` instead of the Kotlin field name in JSON            |
+| `@JsonString(Converter::class)`   | Class  | Serializes the whole object as a plain string via your converter |
+| `@Reference`                      | Field  | Emits `{ "$ref": "uuid" }` instead of the full object           |
 ---
 
 **Built with ❤️ for the Kotlin community**
