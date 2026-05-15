@@ -63,6 +63,7 @@ Add the following to your `build.gradle.kts`:
 ```kotlin
 dependencies {
     implementation(files("libs/gojson-1.0-SNAPSHOT.jar"))
+    implementation(kotlin("reflect"))
 }
 ```
 
