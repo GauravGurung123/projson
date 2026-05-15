@@ -10,6 +10,22 @@ import projson.mapper.MapMapper
 import projson.mapper.ObjectMapper
 import projson.mapper.PrimitiveMapper
 
+/**
+ * Main entry point for ProJson.
+ *
+ * @constructor
+ * Initializes a new instance of ProJson with default configuration.
+ *
+ * @property context The mapping context used for converting objects to JSON.
+ *
+ * @property referenceManager The reference manager used for managing object references.
+ *
+ * @property pluginManager The plugin manager used for managing JSON plugins.
+ *
+ * @property mappers The list of mappers used for converting objects to JSON.
+ *
+ * @property context The mapping context used for converting objects to JSON.
+ */
 class ProJson {
 
     private val context = MappingContext(

@@ -4,10 +4,10 @@ import projson.plugin.JsonPlugin
 
 class DateAsText : JsonPlugin {
     override fun supports(clazz: Class<*>) =
-        clazz.simpleName == "DateAsText"
+        clazz == Date::class.java
 
     override fun transform(obj: Any): String {
         val d = obj as Date
-        return "${d.day}/${d.month}/${d.year}"
+        return "${d.day}/asd/${d.month}/${d.year}"
     }
 }

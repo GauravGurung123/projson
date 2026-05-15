@@ -13,6 +13,7 @@ import kotlin.test.assertTrue
 
 /**
  * Integration / entry-point tests.
+ *
  */
 class ProJsonTest {
 
