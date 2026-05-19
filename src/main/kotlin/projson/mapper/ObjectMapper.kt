@@ -16,7 +16,14 @@ class ObjectMapper : JsonMapper {
 
     // IMPORTANT: avoid re-serializing JsonElement
     override fun canHandle(obj: Any?) =
-        obj != null && obj !is JsonElement
+        obj != null &&
+        obj !is JsonElement &&
+        obj !is String &&
+        obj !is Number &&
+        obj !is Boolean &&
+        obj !is Char &&
+        obj !is Collection<*> &&
+        obj !is Map<*, *>
 
     override fun map(obj: Any?, context: MappingContext): JsonElement {
 
