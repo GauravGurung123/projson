@@ -430,6 +430,7 @@ Output:
 
 **Things to know about plugins:**
 
+- Plugins in ProJson use exact class matching by default.
 - A plugin takes priority over all other serialization rules for its declared type.
 - If you register multiple plugins for the same type, the first one registered wins.
 - Each `ProJson` instance has its own plugin list. Registering on one instance does not affect others.
